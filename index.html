@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新生兒熊崎氏姓名學 - 智能擇名系統</title>
+    <style>
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-surface: #ffffff;
+            --bg-glass: rgba(255, 255, 255, 0.85);
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-light: #eeeffe;
+            --accent-吉: #10b981;
+            --accent-吉-bg: #ecfdf5;
+            --accent-次吉: #06b6d4;
+            --accent-次吉-bg: #ecfeff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 12px 32px -4px rgba(99, 102, 241, 0.08);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif; }
+        
+        body {
+            background: linear-gradient(135deg, #f0f4ff 0%, #f8fafc 50%, #fff5f5 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        header h1 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #4f46e5, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .search-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .field {
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .field label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 0.875rem 1.25rem;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            background: var(--bg-surface);
+            transition: var(--transition);
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-light);
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.875rem 2rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: auto;
+            height: 50px;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .info-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-surface);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-md);
+            margin-top: 1.5rem;
+            border-left: 4px solid var(--primary);
+            font-size: 0.95rem;
+        }
+
+        .grid-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .config-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .config-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-3px);
+            border-color: var(--primary);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stroke-combo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 99px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .badge-吉 { background: var(--accent-吉-bg); color: var(--accent-吉); }
+        .badge-次吉 { background: var(--accent-次吉-bg); color: var(--accent-次吉); }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            font-size: 0.875rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .stat-item {
+            background: var(--bg-primary);
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .interactive-strokes {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-stroke {
+            flex: 1;
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid transparent;
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .btn-stroke:hover {
+            border-color: var(--primary);
+            background: #e0e7ff;
+        }
+
+        .candidate-box {
+            background: #fafafa;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .candidate-title {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .candidate-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            min-height: 24px;
+        }
+
+        .char-tag {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 0.1rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top:0; left:0; width:100%; height:100%;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 500px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            animation: modalUp 0.2s ease-out;
+        }
+
+        @keyframes modalUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .selectable-char {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .selectable-char:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .selectable-char.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            text-align: right;
+        }
+
+        .btn-close {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>新生兒熊崎氏姓名學擇名系統</h1>
+        <p>基於康熙字典姓名學筆劃，自動運算五格數理與三才最佳相生配置</p>
+    </header>
+
+    <div class="search-card">
+        <div class="input-group">
+            <div class="field">
+                <label for="surnameInput">輸入姓氏 (百家姓)</label>
+                <input type="text" id="surnameInput" placeholder="例如：陳、許、張" value="陳">
+            </div>
+            <div class="field">
+                <label for="strokeInput">或直接輸入姓氏康熙筆劃</label>
+                <input type="number" id="strokeInput" placeholder="例如：19" min="1" max="50">
+            </div>
+            <button class="btn-submit" onclick="calculateNameConfig()">計算最佳配置</button>
+        </div>
+
+        <div class="info-bar" id="surnameInfo">
+            <span>目前選擇姓氏：<strong id="infoSurnameText">鄧</strong></span>
+            <span>康熙算命筆劃：<strong id="infoStrokeText">19</strong> 劃</span>
+            <span>天格五行：<strong id="infoTianText">20 (水)</strong></span>
+        </div>
+    </div>
+
+    <div class="grid-results" id="resultsContainer"></div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="charModal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3 id="modalTitle">選擇常用字</h3>
+            <span style="cursor:pointer;" onclick="closeModal()">✕</span>
+        </div>
+        <div class="modal-body" id="modalCharGrid"></div>
+        <div class="modal-footer">
+            <button class="btn-close" onclick="closeModal()">確定完成</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/**
+ * 熊崎氏姓名學核心資料庫 (JSON 結構)
+ */
+const DATA = {
+    // 81數理吉凶與靈動 (取自PDF資料)
+    STROKES_LUCK: {
+        1:{type:"吉", desc:"大展鴻圖"}, 2:{type:"凶", desc:"根基不固"}, 3:{type:"吉", desc:"蒸蒸日上"}, 4:{type:"凶", desc:"苦難折磨"},
+        5:{type:"吉", desc:"陰陽和合"}, 6:{type:"吉", desc:"萬寶集門"}, 7:{type:"吉", desc:"和氣致祥"}, 8:{type:"吉", desc:"貫徹志望"},
+        9:{type:"凶", desc:"獨營無力"}, 10:{type:"凶", desc:"徒勞無功"}, 11:{type:"吉", desc:"穩健著實"}, 12:{type:"凶", desc:"謀事難成"},
+        13:{type:"吉", desc:"天賦吉運"}, 14:{type:"凶", desc:"忍得苦難"}, 15:{type:"吉", desc:"大事成就"}, 16:{type:"吉", desc:"成就大業"},
+        17:{type:"吉", desc:"把握時機"}, 18:{type:"吉", desc:"百事亨通"}, 19:{type:"凶", desc:"內外不和"}, 20:{type:"凶", desc:"進退兩難"},
+        21:{type:"吉", desc:"光風霽月"}, 22:{type:"凶", desc:"事不如意"}, 23:{type:"吉", desc:"旭日昇天"}, 24:{type:"吉", desc:"錦繡前程"},
+        25:{type:"吉", desc:"資性英敏"}, 26:{type:"凶帶吉", desc:"變怪變異"}, 27:{type:"吉帶凶", desc:"一盛一衰"}, 28:{type:"凶", desc:"遇事坎坷"},
+        29:{type:"吉", desc:"青雲直上"}, 30:{type:"吉帶凶", desc:"吉凶參半"}, 31:{type:"吉", desc:"智勇得志"}, 32:{type:"吉", desc:"池中之龍"},
+        33:{type:"吉", desc:"意氣用事"}, 34:{type:"凶", desc:"災難不絕"}, 35:{type:"吉", desc:"溫和平靜"}, 36:{type:"凶", desc:"波瀾重疊"},
+        37:{type:"吉", desc:"逢凶化吉"}, 38:{type:"凶帶吉", desc:"名雖可得"}, 39:{type:"吉", desc:"雲開見月"}, 40:{type:"吉帶凶", desc:"一盛一衰"},
+        41:{type:"吉", desc:"德望兼備"}, 42:{type:"吉帶凶", desc:"事業不專"}, 43:{type:"吉帶凶", desc:"雨夜之花"}, 44:{type:"凶", desc:"事難遂願"},
+        45:{type:"吉", desc:"新生泰運"}, 46:{type:"凶", desc:"坎坷不平"}, 47:{type:"吉", desc:"有貴人助"}, 48:{type:"吉", desc:"鶴立雞群"}
+    },
+
+    // 三才配置吉凶對照 (PDF 三才五格配置吉凶)
+    SAN_CAI_LUCK: {
+        "木木木":"吉", "木木火":"吉", "木木土":"吉", "木火木":"吉", "木火火":"次吉", "木火土":"吉",
+        "木土火":"吉", "木水木":"吉", "木水金":"次吉", "木水水":"次吉",
+        "火木木":"吉", "火木火":"吉", "火木土":"吉", "火木水":"平上", "火火木":"吉", "火火火":"次吉",
+        "火火土":"平上", "火土火":"吉", "火土土":"吉", "火土金":"次吉", "火水金":"吉", "火水水":"平上",
+        "土木木":"次吉", "土火木":"吉", "土火土":"吉", "土土火":"吉", "土土土":"吉", "土土金":"吉",
+        "土金土":"吉", "土金金":"吉", "土金水":"次吉",
+        "金土土":"吉", "金土金":"吉", "金金土":"吉", "金水金":"吉",
+        "水木木":"吉", "水木火":"次吉", "水木土":"吉", "水金土":"吉"
+    },
+
+    // 常用百家姓傳統算命/康熙筆劃表 (特殊部首筆劃算命規則)
+    SURNAME_DICT: {
+        "鄧": 19, "許": 11, "張": 11, "陳": 16, "林": 8, "黃": 12, "趙": 14, "錢": 16, "孫": 10, "李": 7,
+        "周": 8, "吳": 7, "鄭": 19, "王": 4, "馮": 12, "陳": 16, "褚": 15, "衛": 15, "蔣": 17, "沈": 8,
+        "韓": 17, "楊": 13, "朱": 6, "秦": 10, "尤": 4, "許": 11, "何": 7, "呂": 7, "施": 9, "張": 11,
+        "孔": 4, "曹": 11, "嚴": 20, "華": 14, "金": 8, "魏": 18, "陶": 16, "姜": 9, "戚": 10, "謝": 17
+    },
+
+    // 依筆劃分類常用姓名庫
+    CHAR_DICT: {
+        1: ["一", "乙"], 2: ["力", "丁", "又"], 3: ["子", "凡", "久", "千"], 4: ["允", "予", "天", "文"],
+        5: ["禾", "立", "申", "玄"], 6: ["羽", "安", "充", "企"], 7: ["希", "佑", "宏", "言"],
+        8: ["宗", "宜", "帛", "承"], 9: ["彥", "品", "致", "宥"], 10: ["倫", "庭", "修", "宸"],
+        11: ["皓", "晨", "梓", "偉"], 12: ["博", "傑", "翔", "富"], 13: ["煜", "靖", "暉", "楷"],
+        14: ["碩", "睿", "維", "齊"], 15: ["輝", "毅", "霆", "逸"], 16: ["勳", "儒", "翰", "澤"],
+        17: ["謙", "澤", "駿", "遠"], 18: ["鎧", "鎬", "曜", "藍"], 19: ["韻", "穩", "鵬", "鏡"],
+        20: ["嚴", "寶", "瀚", "懷"]
+    }
+};
+
+let currentConfigCandidates = {}; // 保存各筆劃組合選擇的候選字
+
+// 五行換算 (尾數1,2木, 3,4火, 5,6土, 7,8金, 9,0水)
+function getFiveElement(num) {
+    const digit = num % 10;
+    if (digit === 1 || digit === 2) return "木";
+    if (digit === 3 || digit === 4) return "火";
+    if (digit === 5 || digit === 6) return "土";
+    if (digit === 7 || digit === 8) return "金";
+    return "水";
+}
+
+// 自動監聽姓氏輸入
+document.getElementById("surnameInput").addEventListener("input", function(e) {
+    const val = e.target.value.trim();
+    if (DATA.SURNAME_DICT[val]) {
+        document.getElementById("strokeInput").value = DATA.SURNAME_DICT[val];
+    }
+});
+
+function calculateNameConfig() {
+    const surname = document.getElementById("surnameInput").value.trim();
+    let S = parseInt(document.getElementById("strokeInput").value);
+
+    if (!S && surname && DATA.SURNAME_DICT[surname]) {
+        S = DATA.SURNAME_DICT[surname];
+        document.getElementById("strokeInput").value = S;
+    }
+
+    if (!S || S <= 0) {
+        alert("請輸入有效的姓氏或康熙筆劃數");
+        return;
+    }
+
+    const tianStroke = S + 1;
+    const tianElement = getFiveElement(tianStroke);
+
+    // 更新抬頭 UI
+    document.getElementById("infoSurnameText").textContent = surname || "自訂";
+    document.getElementById("infoStrokeText").textContent = S;
+    document.getElementById("infoTianText").textContent = `${tianStroke} (${tianElement})`;
+
+    const results = [];
+
+    // 遍歷名字第一字(N1)與第二字(N2) 筆劃 (從 1 到 25 劃)
+    for (let n1 = 1; n1 <= 25; n1++) {
+        for (let n2 = 1; n2 <= 25; n2++) {
+            const ren = S + n1;
+            const di = n1 + n2;
+            const wai = n2 + 1;
+            const zong = S + n1 + n2;
+
+            const renLuck = DATA.STROKES_LUCK[ren]?.type || "";
+            const diLuck = DATA.STROKES_LUCK[di]?.type || "";
+            const waiLuck = DATA.STROKES_LUCK[wai]?.type || "";
+            const zongLuck = DATA.STROKES_LUCK[zong]?.type || "";
+
+            // 嚴格篩選：人、地、外、總格都必須帶「吉」
+            if (renLuck.includes("吉") && diLuck.includes("吉") && waiLuck.includes("吉") && zongLuck.includes("吉")) {
+                const renElement = getFiveElement(ren);
+                const diElement = getFiveElement(di);
+                const sanCaiKey = tianElement + renElement + diElement;
+                const sanCaiLuck = DATA.SAN_CAI_LUCK[sanCaiKey];
+
+                // 三才配置大吉或次吉
+                if (sanCaiLuck === "吉" || sanCaiLuck === "次吉") {
+                    results.push({
+                        n1, n2, ren, di, wai, zong,
+                        renElement, diElement,
+                        sanCaiKey, sanCaiLuck,
+                        renLuck, diLuck, waiLuck, zongLuck
+                    });
+                }
+            }
+        }
+    }
+
+    renderResults(S, results);
+}
+
+function renderResults(surnameStroke, list) {
+    const container = document.getElementById("resultsContainer");
+    container.innerHTML = "";
+
+    if (list.length === 0) {
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color: var(--text-muted); padding:3rem;">未找到完全滿足人/地/外/總及三才皆大吉的配置，建議擴大筆劃範圍。</div>`;
+        return;
+    }
+
+    list.forEach(item => {
+        const configId = `${surnameStroke}_${item.n1}_${item.n2}`;
+        if (!currentConfigCandidates[configId]) {
+            currentConfigCandidates[configId] = { n1: [], n2: [] };
+        }
+
+        const card = document.createElement("div");
+        card.className = "config-card";
+        card.innerHTML = `
+            <div>
+                <div class="card-header">
+                    <div class="stroke-combo">配置 (${surnameStroke}, ${item.n1}, ${item.n2})</div>
+                    <span class="badge badge-${item.sanCaiLuck}">三才${item.sanCaiLuck} (${item.sanCaiKey})</span>
+                </div>
+                <div class="stat-grid">
+                    <div class="stat-item"><span>人格: ${item.ren}劃</span> <strong>${item.renLuck}</strong></div>
+                    <div class="stat-item"><span>地格: ${item.di}劃</span> <strong>${item.diLuck}</strong></div>
+                    <div class="stat-item"><span>外格: ${item.wai}劃</span> <strong>${item.waiLuck}</strong></div>
+                    <div class="stat-item"><span>總格: ${item.zong}劃</span> <strong>${item.zongLuck}</strong></div>
+                </div>
+                <div class="interactive-strokes">
+                    <button class="btn-stroke" onclick="openCharModal('${configId}', 'n1', ${item.n1})">名首字：${item.n1} 劃 🔍</button>
+                    <button class="btn-stroke" onclick="openCharModal('${configId}', 'n2', ${item.n2})">名尾字：${item.n2} 劃 🔍</button>
+                </div>
+            </div>
+            <div class="candidate-box">
+                <div class="candidate-title">候選名單預覽：</div>
+                <div class="candidate-tags" id="cand_${configId}">
+                    ${renderCandidateTags(configId)}
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function renderCandidateTags(configId) {
+    const data = currentConfigCandidates[configId];
+    if (!data || (data.n1.length === 0 && data.n2.length === 0)) {
+        return `<span style="color:#a1a1aa; font-size:0.8rem;">點擊上方筆劃選擇吉字...</span>`;
+    }
+    let html = "";
+    if (data.n1.length > 0) html += `<div>首字: ${data.n1.map(c => `<span class="char-tag">${c}</span>`).join("")}</div>`;
+    if (data.n2.length > 0) html += `<div style="margin-top:2px;">尾字: ${data.n2.map(c => `<span class="char-tag">${c}</span>`).join("")}</div>`;
+    return html;
+}
+
+// Modal 控制邏輯
+let activeContext = null;
+
+function openCharModal(configId, pos, stroke) {
+    activeContext = { configId, pos, stroke };
+    document.getElementById("modalTitle").textContent = `選擇 ${stroke} 筆劃吉字`;
+    
+    const chars = DATA.CHAR_DICT[stroke] || ["瑞", "祥", "嘉", "豪", "熙", "誠", "源", "佑", "霖"];
+    const selectedList = currentConfigCandidates[configId][pos];
+    
+    const grid = document.getElementById("modalCharGrid");
+    grid.innerHTML = "";
+
+    chars.forEach(char => {
+        const charEl = document.createElement("div");
+        const isSelected = selectedList.includes(char);
+        charEl.className = `selectable-char ${isSelected ? 'selected' : ''}`;
+        charEl.textContent = char;
+        charEl.onclick = () => {
+            charEl.classList.toggle("selected");
+            if (charEl.classList.contains("selected")) {
+                currentConfigCandidates[configId][pos].push(char);
+            } else {
+                currentConfigCandidates[configId][pos] = currentConfigCandidates[configId][pos].filter(c => c !== char);
+            }
+            // 即時更新背後的候選預覽
+            document.getElementById(`cand_${configId}`).innerHTML = renderCandidateTags(configId);
+        };
+        grid.appendChild(charEl);
+    });
+
+    document.getElementById("charModal").classList.add("active");
+}
+
+function closeModal() {
+    document.getElementById("charModal").classList.remove("active");
+}
+
+// 頁面初次載入執行一次運算 (預設鄧 19 劃)
+window.onload = calculateNameConfig;
+</script>
+</body>
+</html>
