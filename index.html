@@ -2,7 +2,8 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#FAF7F1">
     <title>新生兒熊崎氏姓名學 - 智能擇名系統</title>
     <!-- 韓系文青風：字型（樣式全部在下方 <style>，不再依賴 Tailwind CDN） -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,7 +35,14 @@
             --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+
+        html {
+            -webkit-text-size-adjust: 100%;
+            scrollbar-gutter: stable;
+        }
+        /* Modal 開啟時鎖定背景捲動（由 JS 切換 class） */
+        html.modal-open { overflow: hidden; }
 
         ::selection { background: rgba(138, 154, 125, 0.28); }
 
@@ -195,7 +203,7 @@
         .info-bar span + span::before { content: "·"; color: #BDB193; margin: 0 1rem; }
 
         /* ============ 結果區 ============ */
-        .results-head { display: flex; align-items: baseline; gap: 1rem; margin: 2.75rem 0 1.5rem; }
+        .results-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.5rem 1rem; margin: 2.75rem 0 1.5rem; }
         .results-head h2 {
             font-family: "Noto Serif TC", serif;
             font-size: 1.4rem;
@@ -223,7 +231,7 @@
 
         .grid-results {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
             gap: 1.4rem;
         }
 
@@ -366,7 +374,7 @@
         /* ============ Modal ============ */
         .modal-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            inset: 0;
             background: rgba(47, 43, 38, 0.45);
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
@@ -403,19 +411,37 @@
             align-items: center;
         }
         .modal-header h3 { font-family: "Noto Serif TC", serif; font-size: 1.05rem; font-weight: 700; letter-spacing: 0.04em; }
-        .modal-header span {
+        .modal-close-x {
             display: grid;
             place-items: center;
-            width: 32px; height: 32px;
+            width: 44px; height: 44px;
+            margin: -6px;
+            flex-shrink: 0;
+            border: none;
+            background: transparent;
             border-radius: 999px;
+            font-size: 1rem;
             color: var(--text-muted);
+            cursor: pointer;
             transition: var(--transition);
         }
-        .modal-header span:hover { background: #F1EBDD; color: var(--text-main); }
+        .modal-close-x:hover { background: #F1EBDD; color: var(--text-main); }
+        .modal-close-x:focus-visible { outline: 2px solid #8A9A7D; outline-offset: 2px; }
+
+        /* 底部抽屜的拖曳把手（僅手機顯示） */
+        .modal-grab {
+            display: none;
+            width: 44px; height: 5px;
+            border-radius: 999px;
+            background: #E0D8C4;
+            margin: 0.6rem auto 0;
+            flex-shrink: 0;
+        }
 
         .modal-body {
             padding: 1.4rem 1.5rem;
             overflow-y: auto;
+            overscroll-behavior: contain; /* 防止慣性捲動把背景頁面一起帶走 */
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
@@ -550,6 +576,8 @@
         @keyframes infoFlash { from { background: #EDE5CF; } to { background: #F5F0E3; } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes modalDown { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(18px) scale(0.98); } }
+        @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes sheetDown { from { transform: translateY(0); } to { transform: translateY(100%); } }
 
         /* --- 載入：頁首逐行浮現 + 搜尋卡入場 --- */
         .stagger-item { animation: fadeUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) backwards; animation-delay: var(--d, 0ms); }
@@ -593,7 +621,8 @@
         /* --- Modal 過濾列 --- */
         .modal-filter-row { display: flex; gap: 0.75rem; align-items: center; padding: 0.85rem 1.5rem 0; }
         .modal-filter-row input {
-            flex: 1; height: 38px; padding: 0 0.9rem; font-size: 0.88rem; font-family: inherit;
+            /* 16px/42px：iOS 對 <16px 的輸入框 focus 時會自動放大頁面 */
+            flex: 1; height: 42px; padding: 0 0.9rem; font-size: 1rem; font-family: inherit;
             border: 1px solid #E3DCCB; border-radius: 10px; background: #FFFEFB;
             color: var(--text-main); outline: none; transition: var(--transition);
         }
@@ -636,6 +665,69 @@
         .btn-close:active { transform: scale(0.97); }
         .selectable-char:active { transform: scale(0.94); }
 
+        /* --- 手機：拇指友善布局 + Modal 底部抽屜化 --- */
+        @media (max-width: 768px) {
+            body { padding: 2.25rem 1rem 3.5rem; }
+            header { margin-bottom: 2rem; }
+
+            .search-card { padding: 1.5rem 1.25rem 1.4rem; }
+            /* 欄位全寬直式堆疊，按鈕整條可觸，避免 220px min-width 造成歪斜換行 */
+            .input-group { flex-direction: column; align-items: stretch; gap: 0.9rem; }
+            .field { min-width: 0; }
+            .btn-submit { width: 100%; }
+
+            /* 資訊列直式排列，捨棄「·」分隔（換行時會孤立在行首） */
+            .info-bar { flex-direction: column; gap: 0.3rem; padding: 0.85rem 1rem; }
+            .info-bar span + span::before { display: none; }
+
+            .results-head { margin: 2.25rem 0 1.25rem; gap: 0.35rem 0.75rem; }
+            .results-head .en { order: 1; width: 100%; letter-spacing: 0.22em; margin-top: -0.25rem; }
+
+            .grid-results { gap: 1.1rem; }
+            .config-card { padding: 1.2rem 1.15rem 1.05rem; }
+            .stat-grid { font-size: 0.8rem; gap: 0.5rem; }
+            .stat-item { padding: 0.5rem 0.7rem; flex-wrap: wrap; gap: 0.1rem 0.5rem; }
+            .btn-stroke { padding: 0.85rem 0.45rem; font-size: 0.86rem; }
+            .candidate-box { padding: 0.8rem 0.9rem; }
+            .empty-state { padding: 2.5rem 1rem; }
+
+            /* Modal → 底部抽屜：貼底全寬、圓角只在上方、含安全區 */
+            .modal-overlay { align-items: flex-end; padding: 0; }
+            .modal-card {
+                max-width: none;
+                border-radius: 22px 22px 0 0;
+                max-height: 88vh;
+                max-height: min(88dvh, 88vh);
+                animation-name: sheetUp;
+            }
+            .modal-overlay.closing .modal-card { animation-name: sheetDown; }
+            .modal-grab { display: block; }
+            .modal-header { padding: 0.2rem 1.25rem 0.85rem; }
+            .modal-filter-row { padding: 0.15rem 1.25rem 0; }
+            .modal-body { padding: 1rem 1.25rem; }
+            .modal-footer { padding: 0.9rem 1.25rem calc(0.9rem + env(safe-area-inset-bottom)); }
+            .btn-close { width: 100%; height: 48px; }
+        }
+
+        /* --- 觸控裝置：效能優化 + 消除 hover 黏착 --- */
+        @media (hover: none) and (pointer: coarse) {
+            /* 停用背景漸層無限漂移與 backdrop-filter，省電且避免捲動掉幀 */
+            body::before { animation: none; }
+            .search-card { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(255, 253, 248, 0.97); }
+            .modal-overlay { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(47, 43, 38, 0.5); }
+
+            /* 點觸後 :hover 會黏住，抵銷升起效果；按下瞬間仍保留 :active 回饋 */
+            .config-card:hover,
+            .config-card.in:hover,
+            .btn-stroke:hover,
+            .selectable-char:hover,
+            .btn-submit:hover,
+            .btn-close:hover { transform: none; }
+            .btn-submit:active { transform: translateY(1px) scale(0.98); }
+            .btn-stroke:active { transform: scale(0.98); }
+            .selectable-char:active { transform: scale(0.94); }
+        }
+
         /* --- 無障礙：尊重系統「減少動態效果」設定 --- */
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
@@ -647,7 +739,7 @@
             .config-card, .selectable-char { opacity: 1; }
         }
     </style>
-    <script src="data.js"></script>
+    <script src="data.js" defer></script>
 </head>
 <body>
 
@@ -663,11 +755,12 @@
         <div class="input-group">
             <div class="field">
                 <label for="surnameInput">輸入姓氏 (百家姓)</label>
-                <input type="text" id="surnameInput" placeholder="例如：陳、許、張" value="">
+                <input type="text" id="surnameInput" placeholder="例如：陳、許、張" value=""
+                       autocapitalize="off" autocomplete="off" enterkeyhint="done">
             </div>
             <div class="field">
                 <label for="strokeInput">或直接輸入姓氏康熙筆劃</label>
-                <input type="number" id="strokeInput" placeholder="例如：19" min="1" max="50">
+                <input type="number" id="strokeInput" placeholder="例如：19" min="1" max="50" enterkeyhint="go">
             </div>
             <button class="btn-submit" onclick="calculateNameConfig()">計算最佳配置</button>
         </div>
@@ -694,13 +787,15 @@
 
 <!-- Modal -->
 <div class="modal-overlay" id="charModal">
-    <div class="modal-card">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-grab" aria-hidden="true"></div>
         <div class="modal-header">
             <h3 id="modalTitle">選擇常用字</h3>
-            <span style="cursor:pointer;" onclick="closeModal()">✕</span>
+            <button type="button" class="modal-close-x" aria-label="關閉" onclick="closeModal()">✕</button>
         </div>
         <div class="modal-filter-row">
-            <input type="text" id="charFilterInput" placeholder="輸入字過濾…" oninput="filterCharGrid()">
+            <input type="text" id="charFilterInput" placeholder="輸入字過濾…" oninput="filterCharGrid()"
+                   autocomplete="off" enterkeyhint="search">
             <span class="char-count" id="charCount"></span>
         </div>
         <div class="modal-body" id="modalCharGrid"></div>
@@ -822,6 +917,8 @@ function showFieldError(msg) {
     const el = document.getElementById("fieldError");
     el.textContent = msg;
     el.classList.add("show");
+    // 手機上鍵盤常遮住輸入框下方，把錯誤提示捲入視窗
+    el.scrollIntoView({ block: "nearest", behavior: "smooth" });
     const card = document.querySelector(".search-card");
     card.classList.remove("shake");
     void card.offsetWidth; // 重新觸發 shake 動畫
@@ -1004,6 +1101,7 @@ function renderCandidateTags(configId) {
 // Modal 控制邏輯
 let activeContext = null;
 let activeChars = [];
+let lastFocusedEl = null; // 開啟前持有焦點的元件，關閉後歸還
 
 function openCharModal(configId, pos, stroke) {
     activeContext = { configId, pos, stroke };
@@ -1053,14 +1151,26 @@ function openCharModal(configId, pos, stroke) {
         });
     }
 
-    document.getElementById("charModal").classList.add("active");
+    const overlay = document.getElementById("charModal");
+    lastFocusedEl = document.activeElement;
+    overlay.classList.add("active");
+    document.documentElement.classList.add("modal-open"); // 鎖定背景捲動
+    overlay.querySelector(".modal-close-x").focus({ preventScroll: true });
 }
 
 function closeModal() {
     const overlay = document.getElementById("charModal");
     if (!overlay.classList.contains("active")) return;
     overlay.classList.add("closing");
-    setTimeout(() => overlay.classList.remove("active", "closing"), 180);
+    document.documentElement.classList.remove("modal-open"); // 解鎖背景捲動
+    setTimeout(() => {
+        overlay.classList.remove("active", "closing");
+        // 焦點歸還給開啟它的按鈕，方便鍵盤使用者繼續操作
+        if (lastFocusedEl && typeof lastFocusedEl.focus === "function") {
+            lastFocusedEl.focus({ preventScroll: true });
+        }
+        lastFocusedEl = null;
+    }, 180);
 }
 
 // 字格過濾
@@ -1097,6 +1207,48 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal()
 document.getElementById("charModal").addEventListener("click", e => {
     if (e.target === e.currentTarget) closeModal();
 });
+
+// 手機：底部抽屜下滑關閉（字格清單捲到最上時才生效，避免與清單捲動衝突）
+(function initModalSwipeToClose() {
+    if (!("ontouchstart" in window)) return;
+    const overlay = document.getElementById("charModal");
+    const card = overlay.querySelector(".modal-card");
+    const grid = document.getElementById("modalCharGrid");
+    let startY = 0, dragging = false, dist = 0;
+
+    card.addEventListener("touchstart", e => {
+        if (window.innerWidth > 768) return; // 桌面仍是置中對話框，不啟用拖曳
+        if (grid.scrollTop > 4) return;      // 清單還沒捲到頂 → 讓觸控優先捲動清單
+        startY = e.touches[0].clientY;
+        dragging = true;
+        dist = 0;
+        card.style.transition = "none";
+    }, { passive: true });
+
+    card.addEventListener("touchmove", e => {
+        if (!dragging) return;
+        const dy = e.touches[0].clientY - startY;
+        if (dy <= 0) return;
+        dist = dy > 120 ? 120 + (dy - 120) * 0.3 : dy; // 超過 120px 後加橡皮筋阻力
+        card.style.transform = `translateY(${dist}px)`;
+    }, { passive: true });
+
+    const endDrag = () => {
+        if (!dragging) return;
+        dragging = false;
+        card.style.transition = "transform 0.2s cubic-bezier(0.22, 1, 0.36, 1)";
+        if (dist > 90) {
+            card.style.transform = "translateY(100%)";
+            setTimeout(() => { card.style.transform = ""; card.style.transition = ""; }, 200);
+            closeModal();
+        } else {
+            card.style.transform = "";
+            setTimeout(() => { card.style.transition = ""; }, 220);
+        }
+    };
+    card.addEventListener("touchend", endDrag);
+    card.addEventListener("touchcancel", endDrag);
+})();
 
 // 頁面初次載入時先下載 JSON 再執行計算
 window.onload = async function() {
