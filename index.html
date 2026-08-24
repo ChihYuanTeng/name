@@ -4,361 +4,666 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>新生兒熊崎氏姓名學 - 智能擇名系統</title>
+    <!-- 韓系文青風：字型（樣式全部在下方 <style>，不再依賴 Tailwind CDN） -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700;900&display=swap" rel="stylesheet">
     <style>
+        /* ============ 韓系文青 · 設計變數 ============ */
         :root {
-            --bg-primary: #f8fafc;
-            --bg-surface: #ffffff;
-            --bg-glass: rgba(255, 255, 255, 0.85);
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --primary-light: #eeeffe;
-            --accent-吉: #10b981;
-            --accent-吉-bg: #ecfdf5;
-            --accent-次吉: #06b6d4;
-            --accent-次吉-bg: #ecfeff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --radius-lg: 20px;
-            --radius-md: 12px;
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-            --shadow-md: 0 12px 32px -4px rgba(99, 102, 241, 0.08);
+            --paper: #FAF7F1;
+            --bg-primary: #F6F2E9;
+            --bg-surface: #FFFDF8;
+            --bg-glass: rgba(255, 253, 248, 0.88);
+            --primary: #5F6F52;
+            --primary-hover: #4E5C44;
+            --primary-light: #EDF0E6;
+            --accent-吉: #5F6F52;
+            --accent-吉-bg: #EEF1E7;
+            --accent-次吉: #5F6F52;
+            --accent-次吉-bg: #EEF1E7;
+            --text-main: #2F2B26;
+            --text-soft: #6B6252;
+            --text-muted: #93897B;
+            --border: #E7E1D4;
+            --border-soft: #EFE9DB;
+            --radius-lg: 24px;
+            --radius-md: 14px;
+            --shadow-sm: 0 2px 10px rgba(93, 85, 70, 0.05);
+            --shadow-md: 0 18px 40px -18px rgba(93, 85, 70, 0.18);
             --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif; }
-        
+        * { box-sizing: border-box; }
+
+        ::selection { background: rgba(138, 154, 125, 0.28); }
+
         body {
-            background: linear-gradient(135deg, #f0f4ff 0%, #f8fafc 50%, #fff5f5 100%);
+            background: var(--paper);
+            background-image:
+                radial-gradient(55% 45% at 8% 0%, rgba(138, 154, 125, 0.13) 0%, transparent 60%),
+                radial-gradient(45% 40% at 96% 12%, rgba(201, 155, 142, 0.11) 0%, transparent 60%),
+                radial-gradient(60% 50% at 50% 105%, rgba(216, 207, 186, 0.3) 0%, transparent 65%);
+            background-attachment: fixed;
             color: var(--text-main);
+            font-family: "Noto Sans TC", -apple-system, BlinkMacSystemFont, "PingFang TC", "Microsoft JhengHei", sans-serif;
             min-height: 100vh;
-            padding: 2rem 1rem;
-            line-height: 1.6;
+            margin: 0;
+            padding: 3.5rem 1.25rem 4.5rem;
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1000px; margin: 0 auto; }
 
-        header {
-            text-align: center;
-            margin-bottom: 2.5rem;
+        /* ============ 頁首 ============ */
+        header { text-align: center; margin-bottom: 2.75rem; }
+
+        .eyebrow {
+            font-family: "Cormorant Garamond", "Noto Serif TC", serif;
+            font-size: 0.78rem;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: #A79A80;
+            margin-bottom: 1rem;
         }
 
         header h1 {
-            font-size: 2.25rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #4f46e5, #ec4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
+            font-family: "Noto Serif TC", "PingFang TC", serif;
+            font-size: clamp(1.9rem, 1.1rem + 3.2vw, 2.9rem);
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            line-height: 1.4;
+            color: var(--text-main);
+            margin-bottom: 0.75rem;
         }
 
-        header p {
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
+        .tagline { color: var(--text-muted); font-size: 0.98rem; letter-spacing: 0.05em; }
 
+        .hero-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.85rem;
+            margin-top: 1.5rem;
+            color: #B7AA8C;
+            font-size: 0.75rem;
+        }
+        .hero-divider::before,
+        .hero-divider::after { content: ""; height: 1px; width: 72px; }
+        .hero-divider::before { background: linear-gradient(90deg, transparent, #CFC5AC); }
+        .hero-divider::after { background: linear-gradient(90deg, #CFC5AC, transparent); }
+
+        /* ============ 搜尋卡片 ============ */
         .search-card {
+            position: relative;
             background: var(--bg-glass);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            padding: 2rem;
+            padding: 2.4rem 2.1rem 2.1rem;
             box-shadow: var(--shadow-md);
-            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        .search-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent 4%, #A8B694 30%, #C99B8E 70%, transparent 96%);
+            opacity: 0.65;
         }
 
-        .input-group {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .field {
-            flex: 1;
-            min-width: 220px;
-        }
+        .input-group { display: flex; gap: 1.1rem; flex-wrap: wrap; align-items: flex-end; }
+        .field { flex: 1; min-width: 220px; }
 
         .field label {
             display: block;
+            font-size: 0.75rem;
             font-weight: 600;
-            font-size: 0.875rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-main);
+            letter-spacing: 0.14em;
+            color: var(--text-soft);
+            margin-bottom: 0.6rem;
         }
+        .field label::before { content: "·"; color: #A8B694; margin-right: 0.5em; }
 
         input[type="text"], input[type="number"] {
             width: 100%;
-            padding: 0.875rem 1.25rem;
-            border: 1.5px solid var(--border);
-            border-radius: var(--radius-md);
+            height: 50px;
+            padding: 0 1.15rem;
+            border: 1px solid #E3DCCB;
+            border-radius: 12px;
             font-size: 1rem;
-            background: var(--bg-surface);
+            font-family: inherit;
+            color: var(--text-main);
+            background: #FFFEFB;
             transition: var(--transition);
             outline: none;
         }
-
+        input::placeholder { color: #BCB2A0; }
         input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px var(--primary-light);
+            border-color: #8A9A7D;
+            background: #FFFFFF;
+            box-shadow: 0 0 0 4px rgba(138, 154, 125, 0.16);
         }
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; }
 
         .btn-submit {
-            background: var(--primary);
-            color: white;
+            background: #38332B;
+            color: #F7F3EA;
             border: none;
-            padding: 0.875rem 2rem;
-            border-radius: var(--radius-md);
+            padding: 0 2.5rem;
+            height: 50px;
+            border-radius: 999px;
+            font-family: "Noto Serif TC", serif;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.98rem;
+            letter-spacing: 0.15em;
             cursor: pointer;
             transition: var(--transition);
-            margin-top: auto;
-            height: 50px;
+            box-shadow: 0 12px 26px -12px rgba(56, 51, 43, 0.5);
         }
-
         .btn-submit:hover {
-            background: var(--primary-hover);
-            transform: translateY(-1px);
+            background: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 16px 30px -12px rgba(95, 111, 82, 0.5);
         }
+        .btn-submit:active { transform: translateY(0); }
 
         .info-bar {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            background: var(--bg-surface);
-            padding: 1rem 1.5rem;
-            border-radius: var(--radius-md);
-            margin-top: 1.5rem;
-            border-left: 4px solid var(--primary);
-            font-size: 0.95rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.25rem 0;
+            background: #F5F0E3;
+            border: 1px solid #EBE3D0;
+            border-radius: 14px;
+            margin-top: 1.6rem;
+            padding: 0.95rem 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-soft);
+        }
+        .info-bar strong {
+            color: var(--text-main);
+            font-weight: 700;
+            font-family: "Noto Serif TC", serif;
+        }
+        .info-bar span + span::before { content: "·"; color: #BDB193; margin: 0 1rem; }
+
+        /* ============ 結果區 ============ */
+        .results-head { display: flex; align-items: baseline; gap: 1rem; margin: 2.75rem 0 1.5rem; }
+        .results-head h2 {
+            font-family: "Noto Serif TC", serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            position: relative;
+            padding-left: 1.05rem;
+        }
+        .results-head h2::before {
+            content: "";
+            position: absolute;
+            left: 0; top: 50%;
+            transform: translateY(-50%);
+            width: 4px; height: 1.05em;
+            border-radius: 999px;
+            background: linear-gradient(180deg, #A8B694, #8A9A7D);
+        }
+        .results-head .en {
+            font-family: "Cormorant Garamond", serif;
+            font-size: 0.72rem;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: #A79A80;
         }
 
         .grid-results {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.4rem;
+        }
+
+        .tier-divider {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 0.25rem 0;
+        }
+        .tier-divider::before,
+        .tier-divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+        }
+        .tier-divider::before { background: linear-gradient(90deg, transparent, #D8CFBA); }
+        .tier-divider::after { background: linear-gradient(90deg, #D8CFBA, transparent); }
+        .tier-divider span {
+            font-family: "Noto Serif TC", serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0.22em;
+            color: var(--accent-次吉);
+            white-space: nowrap;
         }
 
         .config-card {
             background: var(--bg-surface);
-            border-radius: var(--radius-lg);
             border: 1px solid var(--border);
-            padding: 1.5rem;
+            border-radius: 20px;
+            padding: 1.5rem 1.5rem 1.3rem;
             box-shadow: var(--shadow-sm);
             transition: var(--transition);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            gap: 1.1rem;
         }
-
         .config-card:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-3px);
-            border-color: var(--primary);
+            transform: translateY(-4px);
+            border-color: #C9CFB4;
+            box-shadow: 0 26px 48px -22px rgba(93, 85, 70, 0.28);
         }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px dashed var(--border);
+            flex-wrap: wrap;
+            gap: 0.5rem 0.75rem;
+            border-bottom: 1px dashed #E2DBC9;
             padding-bottom: 1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.1rem;
         }
 
         .stroke-combo {
-            font-size: 1.25rem;
+            font-family: "Noto Serif TC", serif;
+            font-size: 1.18rem;
             font-weight: 700;
-            color: var(--primary);
+            letter-spacing: 0.02em;
+            color: #33302A;
+            white-space: nowrap;
         }
 
         .badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 99px;
-            font-size: 0.8rem;
-            font-weight: 700;
+            padding: 0.28rem 0.85rem;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            border: 1px solid transparent;
+            white-space: nowrap;
         }
-
-        .badge-吉 { background: var(--accent-吉-bg); color: var(--accent-吉); }
-        .badge-次吉 { background: var(--accent-次吉-bg); color: var(--accent-次吉); }
+        .badge-吉 { background: var(--accent-吉-bg); color: var(--accent-吉); border-color: #D9DFC9; }
+        .badge-次吉 { background: var(--accent-次吉-bg); color: var(--accent-次吉); border-color: #EBD9CF; }
 
         .stat-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
-            font-size: 0.875rem;
-            margin-bottom: 1.25rem;
+            gap: 0.6rem;
+            font-size: 0.85rem;
+            margin-bottom: 1.1rem;
         }
-
         .stat-item {
             background: var(--bg-primary);
-            padding: 0.5rem 0.75rem;
-            border-radius: 8px;
+            border: 1px solid #ECE5D4;
+            padding: 0.55rem 0.85rem;
+            border-radius: 10px;
             display: flex;
             justify-content: space-between;
-        }
-
-        .interactive-strokes {
-            display: flex;
+            align-items: center;
             gap: 0.5rem;
-            margin-bottom: 1rem;
+            color: var(--text-soft);
         }
+        .stat-item strong { color: var(--primary); font-weight: 700; font-family: "Noto Serif TC", serif; }
 
+        .interactive-strokes { display: flex; gap: 0.6rem; }
         .btn-stroke {
             flex: 1;
-            background: var(--primary-light);
-            color: var(--primary);
-            border: 1px solid transparent;
-            padding: 0.5rem;
-            border-radius: 8px;
+            background: #F0F3E8;
+            color: #4E5C44;
+            border: 1px solid #DCE2CC;
+            padding: 0.62rem 0.5rem;
+            border-radius: 12px;
             font-weight: 600;
-            font-size: 0.875rem;
+            font-size: 0.84rem;
             cursor: pointer;
             transition: var(--transition);
             text-align: center;
         }
-
         .btn-stroke:hover {
-            border-color: var(--primary);
-            background: #e0e7ff;
+            background: #E4E9D6;
+            border-color: #B9C49E;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 16px -10px rgba(95, 111, 82, 0.45);
         }
 
         .candidate-box {
-            background: #fafafa;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 0.75rem;
-            font-size: 0.875rem;
+            background: #FAF7EE;
+            border: 1px dashed #DFD6BF;
+            border-radius: 14px;
+            padding: 0.85rem 1rem;
+            font-size: 0.85rem;
         }
-
-        .candidate-title {
-            color: var(--text-muted);
-            font-size: 0.75rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .candidate-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.25rem;
-            min-height: 24px;
-        }
-
+        .candidate-title { color: var(--text-muted); font-size: 0.72rem; letter-spacing: 0.12em; margin-bottom: 0.45rem; }
+        .candidate-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; min-height: 26px; }
+        .candidate-tags > div { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }
         .char-tag {
-            background: white;
-            border: 1px solid var(--border);
-            padding: 0.1rem 0.5rem;
-            border-radius: 4px;
+            background: #FFFDF8;
+            border: 1px solid #E4DCCA;
+            padding: 0.05rem 0.65rem;
+            border-radius: 999px;
+            font-family: "Noto Serif TC", serif;
             font-weight: 600;
+            font-size: 0.92rem;
+            color: #3A352D;
         }
 
-        /* Modal Styles */
+        /* ============ Modal ============ */
         .modal-overlay {
             position: fixed;
-            top:0; left:0; width:100%; height:100%;
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(4px);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(47, 43, 38, 0.45);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 1000;
             padding: 1rem;
         }
-
         .modal-overlay.active { display: flex; }
 
         .modal-card {
-            background: var(--bg-surface);
+            background: #FFFEFA;
+            border: 1px solid var(--border);
             border-radius: var(--radius-lg);
             width: 100%;
             max-width: 500px;
             max-height: 80vh;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            animation: modalUp 0.2s ease-out;
+            box-shadow: 0 40px 80px -24px rgba(47, 43, 38, 0.4);
+            animation: modalUp 0.25s cubic-bezier(0.22, 1, 0.36, 1);
         }
-
         @keyframes modalUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from { transform: translateY(24px) scale(0.98); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
         }
 
         .modal-header {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid var(--border);
+            padding: 1.15rem 1.5rem;
+            border-bottom: 1px solid var(--border-soft);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
+        .modal-header h3 { font-family: "Noto Serif TC", serif; font-size: 1.05rem; font-weight: 700; letter-spacing: 0.04em; }
+        .modal-header span {
+            display: grid;
+            place-items: center;
+            width: 32px; height: 32px;
+            border-radius: 999px;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+        .modal-header span:hover { background: #F1EBDD; color: var(--text-main); }
 
         .modal-body {
-            padding: 1.5rem;
+            padding: 1.4rem 1.5rem;
             overflow-y: auto;
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
         }
+        .modal-body::-webkit-scrollbar { width: 6px; }
+        .modal-body::-webkit-scrollbar-track { background: transparent; }
+        .modal-body::-webkit-scrollbar-thumb { background: #DED5BE; border-radius: 999px; }
 
         .selectable-char {
-            width: 44px;
-            height: 44px;
+            width: 46px;
+            height: 46px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 1.125rem;
+            border: 1px solid #E4DCCA;
+            border-radius: 12px;
+            background: #FFFEFB;
+            font-family: "Noto Serif TC", serif;
+            font-size: 1.15rem;
             font-weight: 600;
+            color: #3A352D;
             cursor: pointer;
             transition: var(--transition);
         }
-
         .selectable-char:hover {
-            border-color: var(--primary);
-            color: var(--primary);
+            border-color: #8A9A7D;
+            color: #4E5C44;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px -8px rgba(93, 85, 70, 0.35);
         }
-
         .selectable-char.selected {
             background: var(--primary);
-            color: white;
+            color: #F7F4EA;
             border-color: var(--primary);
+            box-shadow: 0 8px 18px -8px rgba(95, 111, 82, 0.55);
+        }
+
+        /* 候選清單 Big5 常用字與生僻字的分界線 (flex-wrap 容器,故用 width:100%) */
+        .char-split-divider {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 0.35rem 0;
+        }
+        .char-split-divider::before,
+        .char-split-divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+        }
+        .char-split-divider::before { background: linear-gradient(90deg, transparent, #DED5BE); }
+        .char-split-divider::after { background: linear-gradient(90deg, #DED5BE, transparent); }
+        .char-split-divider span {
+            font-family: "Noto Serif TC", serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            color: #A89F8C;
+            white-space: nowrap;
         }
 
         .modal-footer {
             padding: 1rem 1.5rem;
-            border-top: 1px solid var(--border);
-            text-align: right;
+            border-top: 1px solid var(--border-soft);
+            display: flex;
+            justify-content: flex-end;
         }
 
         .btn-close {
-            background: var(--primary);
-            color: white;
+            background: #38332B;
+            color: #F7F3EA;
             border: none;
-            padding: 0.5rem 1.5rem;
-            border-radius: 8px;
-            cursor: pointer;
+            padding: 0.6rem 1.9rem;
+            border-radius: 999px;
+            font-family: "Noto Serif TC", serif;
             font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.12em;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-close:hover { background: var(--primary); }
+
+        /* ============ 頁尾 ============ */
+        .site-footer {
+            margin-top: 3.5rem;
+            text-align: center;
+            color: #A79A80;
+            font-size: 0.78rem;
+            letter-spacing: 0.28em;
+        }
+
+        /* ============ 鍵盤焦點 ============ */
+        .btn-submit:focus-visible,
+        .btn-stroke:focus-visible,
+        .btn-close:focus-visible {
+            outline: 2px solid #8A9A7D;
+            outline-offset: 2px;
+        }
+
+        /* ============ v2 · 動態系統與細節精修 ============ */
+
+        /* --- 環境背景：放射漸層移到偽元素上緩慢漂移 --- */
+        body { background-image: none; }
+        body::before {
+            content: "";
+            position: fixed;
+            inset: -20%;
+            z-index: -1;
+            pointer-events: none;
+            background-image:
+                radial-gradient(55% 45% at 8% 0%, rgba(138, 154, 125, 0.16) 0%, transparent 60%),
+                radial-gradient(45% 40% at 96% 12%, rgba(201, 155, 142, 0.14) 0%, transparent 60%),
+                radial-gradient(60% 50% at 50% 105%, rgba(216, 207, 186, 0.38) 0%, transparent 65%);
+            animation: bgDrift 26s ease-in-out infinite alternate;
+        }
+        @keyframes bgDrift {
+            from { transform: translate3d(-1.5%, -1%, 0) scale(1); }
+            to { transform: translate3d(1.5%, 1.5%, 0) scale(1.06); }
+        }
+
+        /* --- Keyframes --- */
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+        @keyframes liftIn { from { opacity: 0; transform: translateY(22px) scale(0.99); } to { opacity: 1; transform: none; } }
+        @keyframes cardIn { from { opacity: 0; transform: translateY(18px) scale(0.985); } to { opacity: 1; transform: none; } }
+        @keyframes charIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        @keyframes charPop { 0% { transform: scale(1); } 45% { transform: scale(1.14); } 100% { transform: scale(1); } }
+        @keyframes tagIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+        @keyframes dividerIn { from { transform: scaleX(0); opacity: 0; } to { transform: scaleX(1); opacity: 1; } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-5px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(3px); } }
+        @keyframes infoFlash { from { background: #EDE5CF; } to { background: #F5F0E3; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes modalDown { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(18px) scale(0.98); } }
+
+        /* --- 載入：頁首逐行浮現 + 搜尋卡入場 --- */
+        .stagger-item { animation: fadeUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) backwards; animation-delay: var(--d, 0ms); }
+        .search-card { animation: liftIn 0.7s 0.15s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+        .results-head { animation: fadeUp 0.6s 0.3s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+
+        /* --- 結果卡片：計算時層疊入場，捲動時依序揭示（動畫結束後不影響 hover） --- */
+        .config-card { opacity: 0; }
+        .config-card.in {
+            opacity: 1;
+            animation: cardIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+            animation-delay: var(--d, 0ms);
+        }
+        .config-card.in:hover {
+            transform: translateY(-4px);
+            border-color: #C9CFB4;
+            box-shadow: 0 26px 48px -22px rgba(93, 85, 70, 0.28);
+        }
+
+        /* --- 層級分隔線入場 --- */
+        .tier-divider { animation: fadeIn 0.5s 0.1s backwards; }
+        .tier-divider::before, .tier-divider::after { transform-origin: center; animation: dividerIn 0.7s 0.2s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+        .tier-divider span { animation: fadeUp 0.5s 0.25s backwards; }
+
+        .results-count { font-size: 0.8rem; color: var(--text-muted); letter-spacing: 0.08em; }
+
+        /* --- Modal 進出場 + 字格層疊 + 選取彈跳 --- */
+        .modal-overlay.active { animation: fadeIn 0.22s ease backwards; }
+        .modal-overlay.closing { animation: fadeIn 0.18s ease reverse both; pointer-events: none; }
+        .modal-overlay.closing .modal-card { animation: modalDown 0.18s ease both; }
+        .selectable-char { animation: charIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) backwards; animation-delay: var(--d, 0ms); }
+        .selectable-char.selected {
+            animation: charIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) backwards, charPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation-delay: var(--d, 0ms), 0ms;
+        }
+        .char-tag { animation: tagIn 0.3s backwards; animation-delay: var(--d, 0ms); }
+        .char-split-divider { animation: fadeIn 0.5s 0.1s backwards; }
+        .char-split-divider::before, .char-split-divider::after { transform-origin: center; animation: dividerIn 0.7s 0.2s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+        .char-split-divider span { animation: fadeUp 0.5s 0.25s backwards; }
+
+        /* --- Modal 過濾列 --- */
+        .modal-filter-row { display: flex; gap: 0.75rem; align-items: center; padding: 0.85rem 1.5rem 0; }
+        .modal-filter-row input {
+            flex: 1; height: 38px; padding: 0 0.9rem; font-size: 0.88rem; font-family: inherit;
+            border: 1px solid #E3DCCB; border-radius: 10px; background: #FFFEFB;
+            color: var(--text-main); outline: none; transition: var(--transition);
+        }
+        .modal-filter-row input::placeholder { color: #BCB2A0; }
+        .modal-filter-row input:focus { border-color: #8A9A7D; box-shadow: 0 0 0 3px rgba(138, 154, 125, 0.16); }
+        .modal-filter-row .char-count { font-size: 0.78rem; color: var(--text-muted); white-space: nowrap; }
+
+        /* --- 欄位錯誤提示（取代 alert） --- */
+        .field-error {
+            display: none;
+            margin-top: 1rem;
+            padding: 0.7rem 1.1rem;
+            background: #F7EDE8;
+            border: 1px solid #EBD9CF;
+            border-radius: 12px;
+            color: #A9705C;
+            font-size: 0.86rem;
+            text-align: center;
+        }
+        .field-error.show { display: block; animation: fadeUp 0.3s backwards; }
+        .search-card.shake { animation: shake 0.4s; }
+
+        /* --- 資訊列更新時閃一下 --- */
+        .info-bar.flash { animation: infoFlash 0.9s ease; }
+
+        /* --- 空狀態 --- */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3.5rem 1.5rem;
+            animation: fadeUp 0.5s backwards;
+        }
+        .empty-state .empty-icon { font-size: 1.5rem; color: #B7AA8C; margin-bottom: 0.9rem; }
+        .empty-state .empty-title { font-family: "Noto Serif TC", serif; font-weight: 700; font-size: 1.05rem; color: var(--text-main); margin-bottom: 0.4rem; letter-spacing: 0.06em; }
+        .empty-state .empty-sub { font-size: 0.88rem; color: var(--text-muted); }
+
+        /* --- 按鈕 / 字塊微回饋 --- */
+        .btn-submit:active { transform: translateY(1px) scale(0.98); }
+        .btn-stroke:active { transform: translateY(0) scale(0.98); }
+        .btn-close:active { transform: scale(0.97); }
+        .selectable-char:active { transform: scale(0.94); }
+
+        /* --- 無障礙：尊重系統「減少動態效果」設定 --- */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-delay: 0ms !important;
+                transition-duration: 0.01ms !important;
+            }
+            body::before { animation: none; }
+            .config-card, .selectable-char { opacity: 1; }
         }
     </style>
+    <script src="data.js"></script>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>新生兒熊崎氏姓名學擇名系統</h1>
-        <p>基於康熙字典姓名學筆劃，自動運算五格數理與三才最佳相生配置</p>
+        <p class="eyebrow stagger-item" style="--d:0ms">Kumazaki Name Study</p>
+        <h1 class="stagger-item" style="--d:90ms">新生兒熊崎氏姓名學擇名系統</h1>
+        <p class="tagline stagger-item" style="--d:180ms">基於康熙字典姓名學筆劃，自動運算五格數理與三才最佳相生配置</p>
+        <div class="hero-divider stagger-item" style="--d:270ms">✦</div>
     </header>
 
     <div class="search-card">
         <div class="input-group">
             <div class="field">
                 <label for="surnameInput">輸入姓氏 (百家姓)</label>
-                <input type="text" id="surnameInput" placeholder="例如：陳、許、張" value="陳">
+                <input type="text" id="surnameInput" placeholder="例如：陳、許、張" value="">
             </div>
             <div class="field">
                 <label for="strokeInput">或直接輸入姓氏康熙筆劃</label>
@@ -367,14 +672,24 @@
             <button class="btn-submit" onclick="calculateNameConfig()">計算最佳配置</button>
         </div>
 
+        <div class="field-error" id="fieldError" role="alert"></div>
+
         <div class="info-bar" id="surnameInfo">
-            <span>目前選擇姓氏：<strong id="infoSurnameText">鄧</strong></span>
-            <span>康熙算命筆劃：<strong id="infoStrokeText">19</strong> 劃</span>
-            <span>天格五行：<strong id="infoTianText">20 (水)</strong></span>
+            <span>目前選擇姓氏：<strong id="infoSurnameText">陳</strong></span>
+            <span>康熙算命筆劃：<strong id="infoStrokeText">16</strong> 劃</span>
+            <span>天格五行：<strong id="infoTianText">17 (金)</strong></span>
         </div>
     </div>
 
+    <div class="results-head">
+        <h2>推薦配置</h2>
+        <span class="en">Recommended Configurations</span>
+        <span class="results-count" id="resultCount"></span>
+    </div>
+
     <div class="grid-results" id="resultsContainer"></div>
+
+    <footer class="site-footer">✦ 五格數理 × 三才配置 · 康熙字典筆劃 ✦</footer>
 </div>
 
 <!-- Modal -->
@@ -383,6 +698,10 @@
         <div class="modal-header">
             <h3 id="modalTitle">選擇常用字</h3>
             <span style="cursor:pointer;" onclick="closeModal()">✕</span>
+        </div>
+        <div class="modal-filter-row">
+            <input type="text" id="charFilterInput" placeholder="輸入字過濾…" oninput="filterCharGrid()">
+            <span class="char-count" id="charCount"></span>
         </div>
         <div class="modal-body" id="modalCharGrid"></div>
         <div class="modal-footer">
@@ -447,11 +766,22 @@ const DATA = {
     },
 
     // 常用姓名庫 (將透過 Fetch 讀取 ./data.json 填充)
-    CHAR_DICT: {}
+    CHAR_DICT: {},
+
+    // 各筆劃群 Big5 可顯示(常用)字數,候選清單以此為界分隔生僻字 (由 data.js 提供;fetch 回退時為空)
+    CHAR_DICT_SPLIT: {}
 };
 
 // 異步載入外部 JSON 字庫
 async function loadCharData() {
+    // 直接雙擊開啟 (file://) 時 Chrome/Edge 會擋住 fetch，
+    // 因此若 data.js 已透過 <script> 載入字庫，優先使用它
+    if (window.CHAR_DICT_DATA && Object.keys(window.CHAR_DICT_DATA).length > 0) {
+        DATA.CHAR_DICT = window.CHAR_DICT_DATA;
+        // data.js 同時提供各筆劃群 Big5 字數,供候選清單畫常用/生僻分隔線
+        DATA.CHAR_DICT_SPLIT = window.CHAR_DICT_SPLIT || {};
+        return;
+    }
     try {
         const response = await fetch('./data.json');
         if (!response.ok) {
@@ -483,7 +813,26 @@ document.getElementById("surnameInput").addEventListener("input", function(e) {
     }
 });
 
-function calculateNameConfig() {
+// 使用者開始修正輸入時，立即清除錯誤提示
+["surnameInput", "strokeInput"].forEach(id =>
+    document.getElementById(id).addEventListener("input", clearFieldError)
+);
+
+function showFieldError(msg) {
+    const el = document.getElementById("fieldError");
+    el.textContent = msg;
+    el.classList.add("show");
+    const card = document.querySelector(".search-card");
+    card.classList.remove("shake");
+    void card.offsetWidth; // 重新觸發 shake 動畫
+    card.classList.add("shake");
+}
+
+function clearFieldError() {
+    document.getElementById("fieldError").classList.remove("show");
+}
+
+function calculateNameConfig(silent) {
     const surname = document.getElementById("surnameInput").value.trim();
     let S = parseInt(document.getElementById("strokeInput").value);
 
@@ -493,9 +842,11 @@ function calculateNameConfig() {
     }
 
     if (!S || S <= 0) {
-        alert("請輸入有效的姓氏或康熙筆劃數");
+        // 首次載入頁面時尚未輸入，靜默跳過，不跳出警示視窗
+        if (!silent) showFieldError("請輸入有效的姓氏或康熙筆劃數");
         return;
     }
+    clearFieldError();
 
     const tianStroke = S + 1;
     const tianElement = getFiveElement(tianStroke);
@@ -504,6 +855,10 @@ function calculateNameConfig() {
     document.getElementById("infoSurnameText").textContent = surname || "自訂";
     document.getElementById("infoStrokeText").textContent = S;
     document.getElementById("infoTianText").textContent = `${tianStroke} (${tianElement})`;
+    const infoBar = document.getElementById("surnameInfo");
+    infoBar.classList.remove("flash");
+    void infoBar.offsetWidth; // 重新觸發 flash 動畫
+    infoBar.classList.add("flash");
 
     const results = [];
 
@@ -546,13 +901,25 @@ function calculateNameConfig() {
 function renderResults(surnameStroke, list) {
     const container = document.getElementById("resultsContainer");
     container.innerHTML = "";
+    document.getElementById("resultCount").textContent = list.length > 0 ? `共 ${list.length} 個配置` : "";
 
     if (list.length === 0) {
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color: var(--text-muted); padding:3rem;">未找到完全滿足人/地/外/總及三才皆大吉的配置，建議擴大筆劃範圍。</div>`;
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">✦</div>
+                <div class="empty-title">未找到完全符合的配置</div>
+                <div class="empty-sub">建議調整姓氏或筆劃後再試。</div>
+            </div>`;
         return;
     }
 
-    list.forEach(item => {
+    // 分組渲染：三才吉群在上、分隔線、三才次吉群在下
+    const jiList = list.filter(item => item.sanCaiLuck === "吉");
+    const ciList = list.filter(item => item.sanCaiLuck === "次吉");
+
+    let cardIndex = 0;
+
+    const renderCard = (item) => {
         const configId = `${surnameStroke}_${item.n1}_${item.n2}`;
         if (!currentConfigCandidates[configId]) {
             currentConfigCandidates[configId] = { n1: [], n2: [] };
@@ -560,6 +927,8 @@ function renderResults(surnameStroke, list) {
 
         const card = document.createElement("div");
         card.className = "config-card";
+        // 層疊延遲設上限，長清單的後段卡片不必等太久
+        card.style.setProperty("--d", `${Math.min(cardIndex++, 12) * 45}ms`);
         card.innerHTML = `
             <div>
                 <div class="card-header">
@@ -585,8 +954,40 @@ function renderResults(surnameStroke, list) {
             </div>
         `;
         container.appendChild(card);
+    };
+
+    jiList.forEach(renderCard);
+
+    // 兩群皆存在時才插入分隔線
+    if (jiList.length > 0 && ciList.length > 0) {
+        const divider = document.createElement("div");
+        divider.className = "tier-divider";
+        divider.innerHTML = "<span>三才次吉</span>";
+        container.appendChild(divider);
+    }
+
+    ciList.forEach(renderCard);
+
+    // 視窗內的卡片層疊入場；視窗外的卡片捲動到才揭示
+    container.querySelectorAll(".config-card").forEach(card => {
+        if (card.getBoundingClientRect().top < window.innerHeight) {
+            card.classList.add("in");
+        } else {
+            card.style.setProperty("--d", "0ms");
+            revealObserver.observe(card);
+        }
     });
 }
+
+// 捲動揭示觀察器
+const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add("in");
+            revealObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.08, rootMargin: "0px 0px -4% 0px" });
 
 function renderCandidateTags(configId) {
     const data = currentConfigCandidates[configId];
@@ -594,32 +995,42 @@ function renderCandidateTags(configId) {
         return `<span style="color:#a1a1aa; font-size:0.8rem;">點擊上方筆劃選擇吉字...</span>`;
     }
     let html = "";
-    if (data.n1.length > 0) html += `<div>首字: ${data.n1.map(c => `<span class="char-tag">${c}</span>`).join("")}</div>`;
-    if (data.n2.length > 0) html += `<div style="margin-top:2px;">尾字: ${data.n2.map(c => `<span class="char-tag">${c}</span>`).join("")}</div>`;
+    const tag = (c, i) => `<span class="char-tag" style="--d:${Math.min(i, 8) * 35}ms">${c}</span>`;
+    if (data.n1.length > 0) html += `<div>首字: ${data.n1.map(tag).join("")}</div>`;
+    if (data.n2.length > 0) html += `<div style="margin-top:2px;">尾字: ${data.n2.map(tag).join("")}</div>`;
     return html;
 }
 
 // Modal 控制邏輯
 let activeContext = null;
+let activeChars = [];
 
 function openCharModal(configId, pos, stroke) {
     activeContext = { configId, pos, stroke };
     document.getElementById("modalTitle").textContent = `選擇 ${stroke} 筆劃吉字`;
     
     // 相容數字與字串格式 Key，若找不到則回傳空陣列
-    const chars = DATA.CHAR_DICT[stroke] || DATA.CHAR_DICT[String(stroke)] || [];
+    activeChars = DATA.CHAR_DICT[stroke] || DATA.CHAR_DICT[String(stroke)] || [];
     const selectedList = currentConfigCandidates[configId][pos];
+
+    // 重置過濾狀態
+    document.getElementById("charFilterInput").value = "";
+    document.getElementById("charCount").textContent = activeChars.length ? `${activeChars.length} 字` : "";
     
     const grid = document.getElementById("modalCharGrid");
     grid.innerHTML = "";
 
-    if (chars.length === 0) {
+    if (activeChars.length === 0) {
         grid.innerHTML = `<div style="color:var(--text-muted); padding:1rem;">查無此筆劃 (${stroke} 劃) 的字庫資料。</div>`;
     } else {
-        chars.forEach(char => {
+        // Big5 常用字 / 生僻字 分界(由 data.js 的 CHAR_DICT_SPLIT 提供;
+        // fetch 回退路徑沒有分界資訊時 split=0,不畫分隔線,但字序仍為常用在前)
+        const split = Number(DATA.CHAR_DICT_SPLIT[stroke] ?? 0);
+        activeChars.forEach((char, i) => {
             const charEl = document.createElement("div");
             const isSelected = selectedList.includes(char);
             charEl.className = `selectable-char ${isSelected ? 'selected' : ''}`;
+            charEl.style.setProperty("--d", `${Math.min(i, 23) * 18}ms`);
             charEl.textContent = char;
             charEl.onclick = () => {
                 charEl.classList.toggle("selected");
@@ -632,6 +1043,13 @@ function openCharModal(configId, pos, stroke) {
                 document.getElementById(`cand_${configId}`).innerHTML = renderCandidateTags(configId);
             };
             grid.appendChild(charEl);
+            // 在最後一個 Big5 常用字之後、生僻字之前插入分界線
+            if (i === split - 1 && split > 0 && split < activeChars.length) {
+                const divider = document.createElement("div");
+                divider.className = "char-split-divider";
+                divider.innerHTML = "<span>少用・生僻字(部分裝置可能無法顯示)</span>";
+                grid.appendChild(divider);
+            }
         });
     }
 
@@ -639,13 +1057,61 @@ function openCharModal(configId, pos, stroke) {
 }
 
 function closeModal() {
-    document.getElementById("charModal").classList.remove("active");
+    const overlay = document.getElementById("charModal");
+    if (!overlay.classList.contains("active")) return;
+    overlay.classList.add("closing");
+    setTimeout(() => overlay.classList.remove("active", "closing"), 180);
 }
+
+// 字格過濾
+function filterCharGrid() {
+    if (!activeContext) return;
+    const q = document.getElementById("charFilterInput").value.trim();
+    const grid = document.getElementById("modalCharGrid");
+    const items = [...grid.querySelectorAll(".selectable-char")];
+    let visible = 0;
+    items.forEach(el => {
+        const show = !q || el.textContent.includes(q);
+        el.style.display = show ? "" : "none";
+        if (show) visible++;
+    });
+    document.getElementById("charCount").textContent = q ? `${visible} / ${activeChars.length} 字` : `${activeChars.length} 字`;
+
+    let emptyMsg = grid.querySelector(".filter-empty");
+    if (visible === 0) {
+        if (!emptyMsg) {
+            emptyMsg = document.createElement("div");
+            emptyMsg.className = "filter-empty";
+            emptyMsg.style.cssText = "color:var(--text-muted); padding:1rem; width:100%;";
+            grid.appendChild(emptyMsg);
+        }
+        emptyMsg.style.display = "";
+        emptyMsg.textContent = "沒有符合的字";
+    } else if (emptyMsg) {
+        emptyMsg.style.display = "none";
+    }
+}
+
+// Esc 鍵 / 點擊遮罩關閉
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+document.getElementById("charModal").addEventListener("click", e => {
+    if (e.target === e.currentTarget) closeModal();
+});
 
 // 頁面初次載入時先下載 JSON 再執行計算
 window.onload = async function() {
     await loadCharData();
-    calculateNameConfig();
+    if (!document.getElementById("surnameInput").value && !document.getElementById("strokeInput").value) {
+        // 首次進入且尚未輸入：顯示引導提示，而非空白結果區
+        document.getElementById("resultsContainer").innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">✦</div>
+                <div class="empty-title">準備好了嗎？</div>
+                <div class="empty-sub">輸入姓氏或康熙筆劃，按「計算最佳配置」開始擇名。</div>
+            </div>`;
+    } else {
+        calculateNameConfig(true);
+    }
 };
 </script>
 </body>
