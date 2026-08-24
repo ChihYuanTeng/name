@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#FAF7F1">
-    <title>新生兒熊崎氏姓名學 - 智能擇名系統</title>
+    <title>新生兒熊崎氏姓名學 - 取名系統</title>
     <!-- 韓系文青風：字型（樣式全部在下方 <style>，不再依賴 Tailwind CDN） -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,8 +21,8 @@
             --primary-light: #EDF0E6;
             --accent-吉: #5F6F52;
             --accent-吉-bg: #EEF1E7;
-            --accent-次吉: #5F6F52;
-            --accent-次吉-bg: #EEF1E7;
+            --accent-次吉: hsl(12, 59%, 56%);
+            --accent-次吉-bg: #f1d6cf;
             --text-main: #2F2B26;
             --text-soft: #6B6252;
             --text-muted: #93897B;
@@ -747,7 +747,7 @@
     <header>
         <p class="eyebrow stagger-item" style="--d:0ms">Kumazaki Name Study</p>
         <h1 class="stagger-item" style="--d:90ms">新生兒熊崎氏姓名學擇名系統</h1>
-        <p class="tagline stagger-item" style="--d:180ms">基於康熙字典姓名學筆劃，自動運算五格數理與三才最佳相生配置</p>
+        <p class="tagline stagger-item" style="--d:180ms">基於康熙字典筆劃，自動計算三才五格最佳配置</p>
         <div class="hero-divider stagger-item" style="--d:270ms">✦</div>
     </header>
 
@@ -773,6 +773,23 @@
             <span>天格五行：<strong id="infoTianText">17 (金)</strong></span>
         </div>
     </div>
+
+    <script>
+        // 1. 貼在這裡：監聽 Enter 鍵的程式碼
+        ['surnameInput', 'strokeInput'].forEach(id => {
+            document.getElementById(id).addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    calculateNameConfig();
+                }
+            });
+        });
+
+        // 你原本就有的計算函式
+        function calculateNameConfig() {
+            // 原本的計算邏輯...
+        }
+    </script>
 
     <div class="results-head">
         <h2>推薦配置</h2>
